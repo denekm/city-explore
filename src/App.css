@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+body{
+  background-color: lightcoral;
+}
+
+h3{
+  font-size: 1.5rem;
+}
+
