@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import axios from 'axios';
-import bootstrap from 'bootstrap';
+
 
 class App extends React.Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class App extends React.Component {
   getLocation = async () => {
     try {
 
-      const url = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchQuery}&format=json`
+      const url = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchQuery}&format=json` 
       const response = await axios.get(url);
       console.log(response);
       this.setState({ err: '' });
@@ -33,6 +33,7 @@ class App extends React.Component {
   render() {
     return (
       <div className='App'>
+        <h1>Hello! Let's Explore a City</h1>
         <input onChange={(event) => this.setState({ searchQuery: event.target.value })} placeholder='type a city'></input>
         <button onClick={this.getLocation}> Explore!</button>
 

@@ -1,0 +1,1 @@
+![web response cycle](web-responnse-cycle.png)
