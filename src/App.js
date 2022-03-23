@@ -1,5 +1,7 @@
 import React from 'react';
 import './App.css';
+import Header from './Header';
+import Footer from './Footer';
 import axios from 'axios';
 
 
@@ -19,7 +21,9 @@ class App extends React.Component {
     try {
 
       const url = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchQuery}&format=json` 
+
       const response = await axios.get(url);
+      
       console.log(response);
       this.setState({ err: '' });
       this.setState({ locationObj: response.data[0] });
@@ -33,8 +37,8 @@ class App extends React.Component {
   render() {
     return (
       <div className='App'>
-        <h1>Hello! Let's Explore a City</h1>
-        <input onChange={(event) => this.setState({ searchQuery: event.target.value })} placeholder='type a city'></input>
+        <Header />
+        <input onChange={(event) => this.setState({ searchQuery: event.target.value })} placeholder='city'></input>
         <button onClick={this.getLocation}> Explore!</button>
 
         {this.state.locationObj.display_name &&
@@ -51,6 +55,7 @@ class App extends React.Component {
           </>
         }
       </div >
+      
     );
   }
 }
