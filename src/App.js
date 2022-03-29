@@ -1,8 +1,5 @@
 import React from 'react';
 import './App.css';
-import Header from './Header';
-import Weather from './Weather';
-import Footer from './Footer';
 import axios from 'axios';
 import Movies from './Movies';
 
@@ -13,22 +10,21 @@ class App extends React.Component {
     this.state = {
       searchQuery: '',
       locationObj: {},
-      map: '',
+      map: ''
       err: '',
       weatherData: [],
       city: '',
       moviesResult: null
+      err: ''
     }
 
   }
-
+  
   getLocation = async () => {
     try {
 
-      const url = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchQuery}&format=json`
-
+      const url = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchQuery}&format=json` 
       const response = await axios.get(url);
-
       console.log(response);
       this.setState({ err: '' });
       this.setState({ locationObj: response.data[0] });
@@ -59,10 +55,10 @@ class App extends React.Component {
       this.setState({ displayError: true })
     }
   }
-
+      this.setState({ locationObj: ''});
+    }
+  }
   render() {
-    // console.log(this.state.weatherData);
-    return (
       <>
         <div className='App'>
           <Header />
@@ -91,6 +87,25 @@ class App extends React.Component {
         </div >
         <Footer />
       </>
+      <div className='App'>
+        <h1>Hello! Let's Explore a City</h1>
+        <input onChange={(event) => this.setState({ searchQuery: event.target.value })} placeholder='type a city'></input>
+        <button onClick={this.getLocation}> Explore!</button>
+
+        {this.state.locationObj.display_name &&
+          <>
+            <h2> The city you searched for was: {this.state.locationObj.display_name}</h2>
+            <h3> latitude: {this.state.locationObj.lat}</h3>
+            <h3> longitude: {this.state.locationObj.lat}</h3>
+            <img src={this.state.map} alt={this.state.locationObj.display_name} title={this.state.locationObj.display_name} />
+          </>
+        }
+        {this.state.err &&
+          <>
+            <h3> ERROR: {this.state.err}</h3>
+          </>
+        }
+      </div >
     );
   }
 }
