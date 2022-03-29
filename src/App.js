@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import axios from 'axios';
+import Movies from './Movies';
 
 
 class App extends React.Component {
@@ -9,7 +10,11 @@ class App extends React.Component {
     this.state = {
       searchQuery: '',
       locationObj: {},
-      map: '',
+      map: ''
+      err: '',
+      weatherData: [],
+      city: '',
+      moviesResult: null
       err: ''
     }
 
@@ -27,11 +32,61 @@ class App extends React.Component {
     }
     catch (error) {
       this.setState({ err: error.message });
+      this.setState({ locationObj: '' });
+    }
+    this.getForecast();
+  }
+  getForecast = async () => {
+    try {
+      const url = `${process.env.REACT_APP_SERVER}/weather`
+      const weatherResponse = await axios.get(url, { params: { searchQuery: this.state.searchQuery, lat: this.state.locationObj.lat, lon: this.state.locationObj.lon } });
+      this.setState({ weatherData: weatherResponse.data });
+
+    } catch (error) {
+      this.setState({ displayError: true })
+    }
+  }
+  getMovies = async () => {
+    try {
+      const url = `${process.env.REACT_APP_SERVER}movies?query=${this.state.city}`
+      const moviesResult = await axios.get(url);
+      this.setState({ moviesResult: moviesResult.data });
+    } catch (error) {
+      this.setState({ displayError: true })
+    }
+  }
       this.setState({ locationObj: ''});
     }
   }
   render() {
-    return (
+      <>
+        <div className='App'>
+          <Header />
+          <input onChange={(event) => this.setState({ searchQuery: event.target.value })} placeholder='city'></input>
+          <button onClick={this.getLocation}> Explore!</button>
+
+          {this.state.locationObj.display_name &&
+            <>
+              <h2> The city you searched for was: {this.state.locationObj.display_name}</h2>
+              <h3> latitude: {this.state.locationObj.lat}</h3>
+              <h3> longitude: {this.state.locationObj.lat}</h3>
+              <img src={this.state.map} alt={this.state.locationObj.display_name} title={this.state.locationObj.display_name} />
+              {this.state.weatherData &&
+
+                <>
+                <Weather forecastData={this.state.weatherData} />
+                <Movies forecastData={this.state.moviesResult} /></>
+              }
+            </>
+          }
+          {this.state.err &&
+            <>
+              <h3> ERROR: {this.state.err}</h3>
+            </>
+          }
+        </div >
+        <Footer />
+      </>
       <div className='App'>
         <h1>Hello! Let's Explore a City</h1>
         <input onChange={(event) => this.setState({ searchQuery: event.target.value })} placeholder='type a city'></input>
