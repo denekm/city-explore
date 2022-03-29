@@ -4,6 +4,7 @@ import Header from './Header';
 import Weather from './Weather';
 import Footer from './Footer';
 import axios from 'axios';
+import Movies from './Movies';
 
 
 class App extends React.Component {
@@ -14,7 +15,9 @@ class App extends React.Component {
       locationObj: {},
       map: '',
       err: '',
-      weatherData: []
+      weatherData: [],
+      city: '',
+      moviesResult: null
     }
 
   }
@@ -35,14 +38,23 @@ class App extends React.Component {
       this.setState({ err: error.message });
       this.setState({ locationObj: '' });
     }
-    this.getForcast();
+    this.getForecast();
   }
-  getForcast = async () => {
+  getForecast = async () => {
     try {
       const url = `${process.env.REACT_APP_SERVER}/weather`
       const weatherResponse = await axios.get(url, { params: { searchQuery: this.state.searchQuery, lat: this.state.locationObj.lat, lon: this.state.locationObj.lon } });
       this.setState({ weatherData: weatherResponse.data });
 
+    } catch (error) {
+      this.setState({ displayError: true })
+    }
+  }
+  getMovies = async () => {
+    try {
+      const url = `${process.env.REACT_APP_SERVER}movies?query=${this.state.city}`
+      const moviesResult = await axios.get(url);
+      this.setState({ moviesResult: moviesResult.data });
     } catch (error) {
       this.setState({ displayError: true })
     }
@@ -65,7 +77,9 @@ class App extends React.Component {
               <img src={this.state.map} alt={this.state.locationObj.display_name} title={this.state.locationObj.display_name} />
               {this.state.weatherData &&
 
+                <>
                 <Weather forecastData={this.state.weatherData} />
+                <Movies forecastData={this.state.moviesResult} /></>
               }
             </>
           }

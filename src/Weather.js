@@ -4,7 +4,6 @@ import './App.css';
 class Weather extends React.Component {
 
   render() {
-    console.log(this.props.forecastData);
     return (
       <>
         <h4> Weather Data: </h4>
