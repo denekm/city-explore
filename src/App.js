@@ -15,7 +15,7 @@ class App extends React.Component {
       locationObj: {},
       map: '',
       err: '',
-      weatherData: [],
+      weatherData: null,
       city: '',
       moviesResult: null
     }
@@ -29,7 +29,7 @@ class App extends React.Component {
 
       const response = await axios.get(url);
 
-      console.log(response);
+    
       this.setState({ err: '' });
       this.setState({ locationObj: response.data[0] });
       this.setState({ map: `https://maps.locationiq.com/v3/staticmap?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&center=${this.state.locationObj.lat},${this.state.locationObj.lon}&zoom=12` });
@@ -39,29 +39,29 @@ class App extends React.Component {
       this.setState({ locationObj: '' });
     }
     this.getForecast();
+    this.getMovies();
   }
   getForecast = async () => {
     try {
       const url = `${process.env.REACT_APP_SERVER}/weather`
-      const weatherResponse = await axios.get(url, { params: { searchQuery: this.state.searchQuery, lat: this.state.locationObj.lat, lon: this.state.locationObj.lon } });
-      this.setState({ weatherData: weatherResponse.data });
-
+      const weatherResponse = await axios.get(url, { params: {lat: this.state.locationObj.lat, lon: this.state.locationObj.lon } });
+      this.setState({ weatherData: weatherResponse.data});
     } catch (error) {
       this.setState({ displayError: true })
     }
   }
   getMovies = async () => {
     try {
-      const url = `${process.env.REACT_APP_SERVER}movies?query=${this.state.city}`
-      const moviesResult = await axios.get(url);
-      this.setState({ moviesResult: moviesResult.data });
+      const url = `${process.env.REACT_APP_SERVER}/movies?query=${this.state.searchQuery}`
+      const result = await axios.get(url);
+      console.log(result);
+      this.setState({ moviesResult: result.data});
     } catch (error) {
-      this.setState({ displayError: true })
+      this.setState({ displayError: true });
     }
   }
 
   render() {
-    // console.log(this.state.weatherData);
     return (
       <>
         <div className='App'>
@@ -76,10 +76,10 @@ class App extends React.Component {
               <h3> longitude: {this.state.locationObj.lat}</h3>
               <img src={this.state.map} alt={this.state.locationObj.display_name} title={this.state.locationObj.display_name} />
               {this.state.weatherData &&
-
-                <>
                 <Weather forecastData={this.state.weatherData} />
-                <Movies forecastData={this.state.moviesResult} /></>
+              }
+              {this.state.moviesResult &&
+              <Movies moviesResult={this.state.moviesResult} />
               }
             </>
           }
