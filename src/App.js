@@ -2,6 +2,9 @@ import React from 'react';
 import './App.css';
 import axios from 'axios';
 import Movies from './Movies';
+import Header from './Header';
+import Weather from './Weather';
+import Footer from './Footer';
 
 
 class App extends React.Component {
@@ -10,20 +13,20 @@ class App extends React.Component {
     this.state = {
       searchQuery: '',
       locationObj: {},
-      map: ''
+      map: '',
       err: '',
       weatherData: null,
       city: '',
       moviesResult: null
-      err: ''
+
     }
 
   }
-  
+
   getLocation = async () => {
     try {
 
-      const url = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchQuery}&format=json` 
+      const url = `https://us1.locationiq.com/v1/search.php?key=${process.env.REACT_APP_LOCATIONIQ_KEY}&q=${this.state.searchQuery}&format=json`
       const response = await axios.get(url);
       this.setState({ err: '' });
       this.setState({ locationObj: response.data[0] });
@@ -39,8 +42,8 @@ class App extends React.Component {
   getForecast = async () => {
     try {
       const url = `${process.env.REACT_APP_SERVER}/weather`
-      const weatherResponse = await axios.get(url, { params: {lat: this.state.locationObj.lat, lon: this.state.locationObj.lon } });
-      this.setState({ weatherData: weatherResponse.data});
+      const weatherResponse = await axios.get(url, { params: { lat: this.state.locationObj.lat, lon: this.state.locationObj.lon } });
+      this.setState({ weatherData: weatherResponse.data });
     } catch (error) {
       this.setState({ displayError: true })
     }
@@ -50,46 +53,18 @@ class App extends React.Component {
       const url = `${process.env.REACT_APP_SERVER}/movies?query=${this.state.searchQuery}`
       const result = await axios.get(url);
       console.log(result);
-      this.setState({ moviesResult: result.data});
+      this.setState({ moviesResult: result.data });
     } catch (error) {
       this.setState({ displayError: true });
     }
   }
-      this.setState({ locationObj: ''});
-    }
-  }
-  render() {
-      <>
-        <div className='App'>
-          <Header />
-          <input onChange={(event) => this.setState({ searchQuery: event.target.value })} placeholder='city'></input>
-          <button onClick={this.getLocation}> Explore!</button>
 
-          {this.state.locationObj.display_name &&
-            <>
-              <h2> The city you searched for was: {this.state.locationObj.display_name}</h2>
-              <h3> latitude: {this.state.locationObj.lat}</h3>
-              <h3> longitude: {this.state.locationObj.lat}</h3>
-              <img src={this.state.map} alt={this.state.locationObj.display_name} title={this.state.locationObj.display_name} />
-              {this.state.weatherData &&
-                <Weather forecastData={this.state.weatherData} />
-              }
-              {this.state.moviesResult &&
-              <Movies moviesResult={this.state.moviesResult} />
-              }
-            </>
-          }
-          {this.state.err &&
-            <>
-              <h3> ERROR: {this.state.err}</h3>
-            </>
-          }
-        </div >
-        <Footer />
-      </>
+  render() {
+    return(
+    <>
       <div className='App'>
-        <h1>Hello! Let's Explore a City</h1>
-        <input onChange={(event) => this.setState({ searchQuery: event.target.value })} placeholder='type a city'></input>
+        <Header />
+        <input onChange={(event) => this.setState({ searchQuery: event.target.value })} placeholder='city'></input>
         <button onClick={this.getLocation}> Explore!</button>
 
         {this.state.locationObj.display_name &&
@@ -98,6 +73,12 @@ class App extends React.Component {
             <h3> latitude: {this.state.locationObj.lat}</h3>
             <h3> longitude: {this.state.locationObj.lat}</h3>
             <img src={this.state.map} alt={this.state.locationObj.display_name} title={this.state.locationObj.display_name} />
+            {this.state.weatherData &&
+              <Weather forecastData={this.state.weatherData} />
+            }
+            {this.state.moviesResult &&
+              <Movies moviesResult={this.state.moviesResult} />
+            }
           </>
         }
         {this.state.err &&
@@ -106,7 +87,9 @@ class App extends React.Component {
           </>
         }
       </div >
-    );
+      <Footer />
+    </>
+  );
   }
 }
 
