@@ -1,1 +1,1 @@
-![web response cycle](web-responnse-cycle.png)
+<!-- ![web response cycle](web-response-cycle.png) -->

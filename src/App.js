@@ -52,8 +52,8 @@ class App extends React.Component {
     try {
       const url = `${process.env.REACT_APP_SERVER}/movies?query=${this.state.searchQuery}`
       const result = await axios.get(url);
-      console.log(result);
       this.setState({ moviesResult: result.data });
+      // console.log(this.state.moviesResult);
     } catch (error) {
       this.setState({ displayError: true });
     }
